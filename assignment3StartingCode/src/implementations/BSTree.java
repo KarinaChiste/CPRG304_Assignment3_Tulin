@@ -7,8 +7,10 @@ import java.util.NoSuchElementException;
 import utilities.BSTreeADT;
 import utilities.Iterator;
 
-public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>, Iterator
+public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>, Iterator, Serializable
 {
+	private static final long serialVersionUID = 1L;
+	
 	private BSTreeNode<E> root;
 	private int size;
 	private BSTreeNode<E> removed;
