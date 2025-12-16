@@ -1,351 +1,266 @@
 package implementations;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
-
 import utilities.BSTreeADT;
 import utilities.Iterator;
 
-public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>, Iterator, Serializable
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+
+public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>
 {
-	private static final long serialVersionUID = 1L;
-	
-	private BSTreeNode<E> root;
-	private int size;
-	private BSTreeNode<E> removed;
-//	private ArrayList<E> iterator;
-	
-	public BSTree(E item) {
-		size = 1;
-		root = new BSTreeNode<E>(item);
-	}
-	
-	public BSTree() {
-		size = 0;
-		root = null;
-	}
-	
+    private BSTreeNode<E> root;
+    private int size;
+    private BSTreeNode<E> removed;
 
-	@Override
-	public BSTreeNode<E> getRoot() throws NullPointerException
-	{
-		// TODO Auto-generated method stub
-		if (root == null) {
-			throw new NullPointerException("Tree is empty");
-		}
-		else {
-			return root;
-		}
-		
-	}
+    public BSTree(E item) {
+        size = 1;
+        root = new BSTreeNode<E>(item);
+    }
 
-	@Override
-	public int getHeight()
-	{
-		// TODO Auto-generated method stub
-		
-		return calculateHeight(root);
-	}
-	
-	private int calculateHeight(BSTreeNode<E> node) {
-		if(node == null) {
-			return 0;
-		}
-		else {
-			return Math.max(calculateHeight(node.left), calculateHeight(node.right)) + 1;
-		}
-		
-	}
+    public BSTree() {
+        size = 0;
+        root = null;
+    }
 
-	@Override
-	public int size()
-	{
-		// TODO Auto-generated method stub
-		return size;
-	}
+    @Override
+    public BSTreeNode<E> getRoot() throws NullPointerException {
+        if (root == null) {
+            throw new NullPointerException("Tree is empty");
+        }
+        return root;
+    }
 
-	@Override
-	public boolean isEmpty()
-	{
-		// TODO Auto-generated method stub
-		if(size == 0) {
-			return true;
-		}
-		else {
-			return false;
-		}
-		
-	}
+    @Override
+    public int getHeight() {
+        return calculateHeight(root);
+    }
 
-	@Override
-	public void clear()
-	{
-		// TODO Auto-generated method stub
-		root=null;
-		size=0;
-		
-	}
+    private int calculateHeight(BSTreeNode<E> node) {
+        if (node == null) {
+            return 0;
+        }
+        return Math.max(calculateHeight(node.left), calculateHeight(node.right)) + 1;
+    }
 
-	@Override
-	public boolean contains(E entry) throws NullPointerException
-	{
-		// TODO Auto-generated method stub
-		if(entry==null) {
-			throw new NullPointerException("Entry is null");
-		}
-		BSTreeNode<E> node = search(entry);
-		if(node==null) {
-			return false;
-		}
-		if(node.getElement() == entry) {
-			return true;
-		}
-		else {
-			return false;
-		}
-		
-	}
+    @Override
+    public int size() {
+        return size;
+    }
 
-	@Override
-	public BSTreeNode<E> search(E entry) throws NullPointerException
-	{
-		// TODO Auto-generated method stub
-		
-		if (entry == null) {
-			throw new NullPointerException("Entry is null");
-		}
-		else {
-			return find(root, entry);
-		}
-		
-	}
-	
-	private BSTreeNode<E> find(BSTreeNode<E> test, E value){
-		
-		if(test == null) {
-			return null;
-		}
-		if(value.compareTo(test.getElement()) == 0) {
-			return test;
-		}
-		else if(value.compareTo(test.getElement()) < 0) {
-			test = find(test.left, value);
-		}
-		else if(value.compareTo(test.getElement()) > 0) {
-			test = find(test.right, value);
-		}
-		
-		return test;
-		
-	}
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
 
-	@Override
-	public boolean add(E newEntry) throws NullPointerException
-	{
-		// TODO Auto-generated method stub
-		if (newEntry == null) {
-			throw new NullPointerException("Entry is null");
-		}
-		else if(root == null) {
-			root = new BSTreeNode<E>(newEntry);
-			size ++;
-		}
-		else
-		{
-			insert(root, newEntry);
-			size++;
-		}
-		
-		
-		return true;
-	}
-	private BSTreeNode<E> insert(BSTreeNode<E> node, E value) {
-		if (node == null)
-		{
-			return new BSTreeNode<E>(value);
-		}
-		else if (value.compareTo(node.getElement())<0) {
-			node.left = insert(node.left, value);
-		}
-		else if(value.compareTo(node.getElement())>0) {
-			node.right = insert(node.right, value);
-		}
-		return node;
-	}
+    @Override
+    public void clear() {
+        root = null;
+        size = 0;
+    }
 
-	@Override
-	public BSTreeNode<E> removeMin()
-	{
-		// TODO Auto-generated method stub
-		if(root == null) {
-			return null;
-		}
-		else {
-			removed = null;
-			root = removeSmallest(root);
-			return removed;
-		}
-		
-	}
-	
-	private BSTreeNode<E> removeSmallest(BSTreeNode<E> node)
-	{
-		if(node.left == null) {
-			removed = node;
-			node = node.right;
-			size --;
-			return removed;
-		}
-		else {
-			removeSmallest(node.left);
-		}
-		return null;
-	}
+    @Override
+    public boolean contains(E entry) throws NullPointerException {
+        if (entry == null) {
+            throw new NullPointerException("Entry is null");
+        }
+        return search(entry) != null;
+    }
 
-	@Override
-	public BSTreeNode<E> removeMax()
-	{
-		// TODO Auto-generated method stub
-		if(root == null) {
-			return null;
-		}
-		else {
-			removed = null;
-			root = removeLargest(root);
-			return removed;
-		}
-	}
-	
-	private BSTreeNode<E> removeLargest(BSTreeNode<E> node)
-	{
-		if(node.right == null) {
-			removed = node;
-			node = node.left;
-			size --;
-			return removed;
-		}
-		else {
-			removeLargest(node.right);
-		}
-		return null;
-	}
+    @Override
+    public BSTreeNode<E> search(E entry) throws NullPointerException {
+        if (entry == null) {
+            throw new NullPointerException("Entry is null");
+        }
+        return find(root, entry);
+    }
 
-	@Override
-	public Iterator<E> inorderIterator()
-	{
-		// TODO Auto-generated method stub
-		ArrayList<E> iterator = new ArrayList<E>();
-		inOrder(root, iterator);
-		return new Iterator<E>() {
-			private int index = 0;
+    private BSTreeNode<E> find(BSTreeNode<E> node, E value) {
+        if (node == null) {
+            return null;
+        }
 
-			@Override
-			public boolean hasNext()
-			{
-				// TODO Auto-generated method stub
-				return index < iterator.size();
-			}
+        int cmp = value.compareTo(node.getElement());
 
-			@Override
-			public E next() throws NoSuchElementException
-			{
-				// TODO Auto-generated method stub
-				 if (!hasNext()) {
-		                throw new NoSuchElementException("No next element");
-		            }
-		            return iterator.get(index++);
-			}
-		};
-	}
-	
-	private void inOrder(BSTreeNode<E> node, ArrayList<E> iterator) {
-		
-		if(node ==null) {
-			return;
-		}
-		inOrder(node.left, iterator);
-		iterator.add(node.getElement());
-		inOrder(node.right, iterator);
-		
-	}
+        if (cmp == 0) {
+            return node;
+        } else if (cmp < 0) {
+            return find(node.left, value);
+        } else {
+            return find(node.right, value);
+        }
+    }
 
-	@Override
-	public Iterator<E> preorderIterator()
-	{
-		// TODO Auto-generated method stub
-		ArrayList<E> iterator = new ArrayList<E>();
-		preOrder(root, iterator);
-		return new Iterator<E>() {
-			private int index = 0;
+    @Override
+    public boolean add(E newEntry) throws NullPointerException {
+        if (newEntry == null) {
+            throw new NullPointerException("Entry is null");
+        }
 
-			@Override
-			public boolean hasNext()
-			{
-				// TODO Auto-generated method stub
-				return index < iterator.size();
-			}
+        if (root == null) {
+            root = new BSTreeNode<E>(newEntry);
+            size++;
+            return true;
+        }
 
-			@Override
-			public E next() throws NoSuchElementException
-			{
-				// TODO Auto-generated method stub
-				 if (!hasNext()) {
-		                throw new NoSuchElementException("No next element");
-		            }
-		            return iterator.get(index++);
-			}
-		};
-	}
-	
-	private void preOrder(BSTreeNode<E> node, ArrayList<E> iterator) {
-		
-		if(node ==null) {
-			return;
-		}
-		iterator.add(node.getElement());
-		preOrder(node.left, iterator);
-		preOrder(node.right, iterator);
-	}
+        if (insert(root, newEntry)) {
+            size++;
+            return true;
+        }
 
-	@Override
-	public Iterator<E> postorderIterator()
-	{
-		// TODO Auto-generated method stub
-		ArrayList<E> iterator = new ArrayList<E>();
-		postOrder(root, iterator);
-		return new Iterator<E>() {
-			private int index = 0;
+        return false;
+    }
 
-			@Override
-			public boolean hasNext()
-			{
-				// TODO Auto-generated method stub
-				return index < iterator.size();
-			}
+    private boolean insert(BSTreeNode<E> node, E value) {
+        int cmp = value.compareTo(node.getElement());
 
-			@Override
-			public E next() throws NoSuchElementException
-			{
-				// TODO Auto-generated method stub
-				 if (!hasNext()) {
-		                throw new NoSuchElementException("No next element");
-		            }
-		            return iterator.get(index++);
-			}
-		};
-	}
-	
-	private void postOrder(BSTreeNode<E> node, ArrayList<E> iterator) {
-		
-		if(node ==null) {
-			return;
-		}
-		
-		postOrder(node.left, iterator);
-		postOrder(node.right, iterator);
-		iterator.add(node.getElement());
-	}
+        if (cmp == 0) {
+            return false; // duplicate
+        } else if (cmp < 0) {
+            if (node.left == null) {
+                node.left = new BSTreeNode<E>(value);
+                return true;
+            }
+            return insert(node.left, value);
+        } else {
+            if (node.right == null) {
+                node.right = new BSTreeNode<E>(value);
+                return true;
+            }
+            return insert(node.right, value);
+        }
+    }
 
-	
+    @Override
+    public BSTreeNode<E> removeMin() {
+        if (root == null) {
+            return null;
+        }
+
+        removed = null;
+        root = removeSmallest(root);
+        return removed;
+    }
+
+    private BSTreeNode<E> removeSmallest(BSTreeNode<E> node) {
+        if (node.left == null) {
+            removed = node;
+            size--;
+            return node.right;
+        }
+
+        node.left = removeSmallest(node.left);
+        return node;
+    }
+
+    @Override
+    public BSTreeNode<E> removeMax() {
+        if (root == null) {
+            return null;
+        }
+
+        removed = null;
+        root = removeLargest(root);
+        return removed;
+    }
+
+    private BSTreeNode<E> removeLargest(BSTreeNode<E> node) {
+        if (node.right == null) {
+            removed = node;
+            size--;
+            return node.left;
+        }
+
+        node.right = removeLargest(node.right);
+        return node;
+    }
+
+    @Override
+    public Iterator<E> inorderIterator() {
+        ArrayList<E> iterator = new ArrayList<>();
+        inOrder(root, iterator);
+
+        return new Iterator<E>() {
+            private int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return index < iterator.size();
+            }
+
+            @Override
+            public E next() throws NoSuchElementException {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("No next element");
+                }
+                return iterator.get(index++);
+            }
+        };
+    }
+
+    private void inOrder(BSTreeNode<E> node, ArrayList<E> iterator) {
+        if (node == null) return;
+        inOrder(node.left, iterator);
+        iterator.add(node.getElement());
+        inOrder(node.right, iterator);
+    }
+
+    @Override
+    public Iterator<E> preorderIterator() {
+        ArrayList<E> iterator = new ArrayList<>();
+        preOrder(root, iterator);
+
+        return new Iterator<E>() {
+            private int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return index < iterator.size();
+            }
+
+            @Override
+            public E next() throws NoSuchElementException {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("No next element");
+                }
+                return iterator.get(index++);
+            }
+        };
+    }
+
+    private void preOrder(BSTreeNode<E> node, ArrayList<E> iterator) {
+        if (node == null) return;
+        iterator.add(node.getElement());
+        preOrder(node.left, iterator);
+        preOrder(node.right, iterator);
+    }
+
+    @Override
+    public Iterator<E> postorderIterator() {
+        ArrayList<E> iterator = new ArrayList<>();
+        postOrder(root, iterator);
+
+        return new Iterator<E>() {
+            private int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return index < iterator.size();
+            }
+
+            @Override
+            public E next() throws NoSuchElementException {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("No next element");
+                }
+                return iterator.get(index++);
+            }
+        };
+    }
+
+    private void postOrder(BSTreeNode<E> node, ArrayList<E> iterator) {
+        if (node == null) return;
+        postOrder(node.left, iterator);
+        postOrder(node.right, iterator);
+        iterator.add(node.getElement());
+    }
 }
